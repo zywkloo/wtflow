@@ -1,10 +1,35 @@
-# SourceGit - Opensource Git GUI client.
+# wtflow
 
-[![stars](https://img.shields.io/github/stars/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/stargazers)
-[![forks](https://img.shields.io/github/forks/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/forks)
-[![license](https://img.shields.io/github/license/sourcegit-scm/sourcegit.svg)](LICENSE)
-[![latest](https://img.shields.io/github/v/release/sourcegit-scm/sourcegit.svg)](https://github.com/sourcegit-scm/sourcegit/releases/latest)
-[![downloads](https://img.shields.io/github/downloads/sourcegit-scm/sourcegit/total)](https://github.com/sourcegit-scm/sourcegit/releases)
+> **A worktree-first Git client for agent workflows.**
+>
+> `wtflow` is an experimental fork of
+> [SourceGit](https://github.com/sourcegit-scm/sourcegit). It treats Git
+> worktrees as first-class workspaces and explores task governance, lifecycle
+> visibility, and one external agent TUI session per worktree.
+
+[![build](https://github.com/zywkloo/wtflow/actions/workflows/build.yml/badge.svg)](https://github.com/zywkloo/wtflow/actions/workflows/build.yml)
+[![license](https://img.shields.io/github/license/zywkloo/wtflow.svg)](LICENSE)
+[![upstream](https://img.shields.io/badge/upstream-SourceGit-4f7cff)](https://github.com/sourcegit-scm/sourcegit)
+
+## Project Status
+
+`wtflow` is currently a research fork, not a stable SourceGit replacement.
+The first milestone is a read-only, default-open Worktrees panel that combines
+Git-native worktree facts with optional governance state from the
+[`wtcraft`](https://github.com/zywkloo/wtcraft) core.
+
+Planned boundaries:
+
+* Keep SourceGit's mature cross-platform Git client foundation.
+* Make worktrees the primary unit for agent-oriented development.
+* Allow at most one active external agent TUI session per worktree.
+* Keep agent runtimes and terminal emulation outside the application.
+* Preserve graceful operation when `wtcraft` is unavailable.
+
+SourceGit remains the upstream foundation and retains its original MIT
+license and attribution. The existing feature, installation, and development
+documentation below is inherited from upstream and will be updated as the
+fork evolves.
 
 ## Screenshots
 
