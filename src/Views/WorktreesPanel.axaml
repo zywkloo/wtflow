@@ -1,0 +1,181 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:SourceGit.ViewModels"
+             xmlns:c="using:SourceGit.Converters"
+             mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="600"
+             x:Class="SourceGit.Views.WorktreesPanel"
+             x:DataType="vm:WorktreesPanel">
+  <UserControl.Styles>
+    <Style Selector="Border.wt_chip">
+      <Setter Property="Padding" Value="5,1"/>
+      <Setter Property="Margin" Value="0,2,4,0"/>
+      <Setter Property="CornerRadius" Value="3"/>
+      <Setter Property="Background" Value="{DynamicResource Brush.Badge}"/>
+    </Style>
+    <Style Selector="Border.wt_badge">
+      <Setter Property="Padding" Value="5,0"/>
+      <Setter Property="Margin" Value="4,0,0,0"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Background" Value="{DynamicResource Brush.Badge}"/>
+    </Style>
+  </UserControl.Styles>
+
+  <Border Background="{DynamicResource Brush.ToolBar}"
+          BorderBrush="{DynamicResource Brush.Border0}"
+          BorderThickness="1,0,0,0">
+    <Grid RowDefinitions="Auto,Auto,*">
+      <!-- Header -->
+      <Border Grid.Row="0" Height="28"
+              Background="{DynamicResource Brush.TitleBar}"
+              BorderBrush="{DynamicResource Brush.Border0}"
+              BorderThickness="0,0,0,1">
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="8,0">
+          <Path Grid.Column="0" Width="12" Height="12"
+                Data="{StaticResource Icons.Worktrees}"
+                Fill="{DynamicResource Brush.FG2}"/>
+          <TextBlock Grid.Column="1" Classes="bold" Margin="6,0,0,0"
+                     VerticalAlignment="Center"
+                     Text="{DynamicResource Text.WorktreesPanel.Title}"/>
+          <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                     Foreground="{DynamicResource Brush.FG2}"
+                     Text="{Binding Items.Count}"/>
+        </Grid>
+      </Border>
+
+      <!-- Graceful-degradation banner -->
+      <Border Grid.Row="1" Padding="8,5"
+              Background="{DynamicResource Brush.Badge}"
+              IsVisible="{Binding !IsWtcraftAvailable}">
+        <TextBlock Classes="small" TextWrapping="Wrap"
+                   Foreground="{DynamicResource Brush.FG2}"
+                   Text="{DynamicResource Text.WorktreesPanel.Unavailable}"/>
+      </Border>
+
+      <!-- Empty state -->
+      <TextBlock Grid.Row="2" Classes="small" Margin="12"
+                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                 TextWrapping="Wrap" TextAlignment="Center"
+                 Foreground="{DynamicResource Brush.FG2}"
+                 IsVisible="{Binding IsEmpty}"
+                 Text="{DynamicResource Text.WorktreesPanel.Empty}"/>
+
+      <!-- Worktree rows -->
+      <ScrollViewer Grid.Row="2"
+                    HorizontalScrollBarVisibility="Disabled"
+                    IsVisible="{Binding !IsEmpty}">
+        <ItemsControl ItemsSource="{Binding Items}" Margin="6">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:WorktreePanelItem">
+              <Border Margin="0,3" Padding="8,6" CornerRadius="4"
+                      Background="{DynamicResource Brush.Contents}"
+                      BorderBrush="{DynamicResource Brush.Border2}"
+                      BorderThickness="1">
+                <StackPanel Orientation="Vertical">
+                  <!-- Name + Git-native badges -->
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock Classes="bold" Text="{Binding Name}"
+                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                    <Border Classes="wt_badge" IsVisible="{Binding IsCurrent}">
+                      <TextBlock Classes="small" Foreground="{DynamicResource Brush.Accent}"
+                                 Text="{DynamicResource Text.WorktreesPanel.Current}"/>
+                    </Border>
+                    <Border Classes="wt_badge" IsVisible="{Binding IsMain}">
+                      <TextBlock Classes="small" Foreground="{DynamicResource Brush.FG2}"
+                                 Text="{DynamicResource Text.WorktreesPanel.Main}"/>
+                    </Border>
+                    <Border Classes="wt_badge" IsVisible="{Binding IsLocked}">
+                      <TextBlock Classes="small" Foreground="{DynamicResource Brush.FG2}"
+                                 Text="{DynamicResource Text.WorktreesPanel.Locked}"/>
+                    </Border>
+                  </StackPanel>
+
+                  <!-- Git-native facts -->
+                  <Grid ColumnDefinitions="Auto,*" Margin="0,4,0,0" RowDefinitions="Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Classes="small"
+                               Foreground="{DynamicResource Brush.FG2}"
+                               Text="{DynamicResource Text.Worktree.Branch}" Margin="0,0,6,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Classes="small"
+                               Text="{Binding Branch}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Classes="small"
+                               Foreground="{DynamicResource Brush.FG2}"
+                               Text="{DynamicResource Text.Worktree.Path}" Margin="0,0,6,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Classes="small"
+                               Foreground="{DynamicResource Brush.FG2}"
+                               Text="{Binding Location}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Grid.Row="2" Grid.Column="0" Classes="small"
+                               Foreground="{DynamicResource Brush.FG2}"
+                               Text="{DynamicResource Text.Worktree.Head}" Margin="0,0,6,0"
+                               IsVisible="{Binding ShortHead, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Classes="small" FontFamily="{DynamicResource Fonts.Monospace}"
+                               Text="{Binding ShortHead}"
+                               IsVisible="{Binding ShortHead, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                  </Grid>
+
+                  <!-- wtcraft governance -->
+                  <StackPanel Orientation="Vertical" Margin="0,6,0,0"
+                              IsVisible="{Binding HasGovernance}">
+                    <Border Height="1" Background="{DynamicResource Brush.Border2}" Margin="0,0,0,5"/>
+                    <WrapPanel Orientation="Horizontal">
+                      <Border Classes="wt_chip" IsVisible="{Binding Stage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <StackPanel Orientation="Horizontal">
+                          <TextBlock Classes="small" Foreground="{DynamicResource Brush.FG2}" Text="{DynamicResource Text.WorktreesPanel.Stage}"/>
+                          <TextBlock Classes="small" Margin="4,0,0,0" Text="{Binding Stage}"/>
+                        </StackPanel>
+                      </Border>
+                      <Border Classes="wt_chip" IsVisible="{Binding Role, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <StackPanel Orientation="Horizontal">
+                          <TextBlock Classes="small" Foreground="{DynamicResource Brush.FG2}" Text="{DynamicResource Text.WorktreesPanel.Role}"/>
+                          <TextBlock Classes="small" Margin="4,0,0,0" Text="{Binding Role}"/>
+                        </StackPanel>
+                      </Border>
+                      <Border Classes="wt_chip" IsVisible="{Binding Agent, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <StackPanel Orientation="Horizontal">
+                          <TextBlock Classes="small" Foreground="{DynamicResource Brush.FG2}" Text="{DynamicResource Text.WorktreesPanel.Agent}"/>
+                          <TextBlock Classes="small" Margin="4,0,0,0" Text="{Binding Agent}"/>
+                        </StackPanel>
+                      </Border>
+                      <Border Classes="wt_chip" IsVisible="{Binding Verification, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <StackPanel Orientation="Horizontal">
+                          <TextBlock Classes="small" Foreground="{DynamicResource Brush.FG2}" Text="{DynamicResource Text.WorktreesPanel.Verification}"/>
+                          <TextBlock Classes="small" Margin="4,0,0,0" Text="{Binding Verification}"/>
+                        </StackPanel>
+                      </Border>
+                    </WrapPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0"
+                                IsVisible="{Binding SessionState, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                      <TextBlock Classes="small" Foreground="{DynamicResource Brush.FG2}" Text="{DynamicResource Text.WorktreesPanel.Session}"/>
+                      <TextBlock Classes="small italic" Margin="4,0,0,0" Text="{Binding SessionState}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="0,5,0,0" IsVisible="{Binding HasAlarms}">
+                      <TextBlock Classes="small" Foreground="{DynamicResource Brush.FG2}" Text="{DynamicResource Text.WorktreesPanel.Alarms}"/>
+                      <ItemsControl ItemsSource="{Binding Alarms}" Margin="0,2,0,0">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="x:String">
+                            <TextBlock Classes="small" TextWrapping="Wrap"
+                                       Foreground="{DynamicResource Brush.Conflict}"
+                                       Text="{Binding}"/>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                  </StackPanel>
+
+                  <!-- Degrade hint when this worktree has no governance state -->
+                  <TextBlock Classes="small italic" Margin="0,6,0,0"
+                             Foreground="{DynamicResource Brush.FG2}"
+                             IsVisible="{Binding !HasGovernance}"
+                             Text="{DynamicResource Text.WorktreesPanel.GitOnly}"/>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Grid>
+  </Border>
+</UserControl>

@@ -14,6 +14,8 @@
       <ColumnDefinition Width="{Binding Source={x:Static vm:Preferences.Instance}, Path=Layout.RepositorySidebarWidth, Mode=TwoWay}" MinWidth="200" MaxWidth="500"/>
       <ColumnDefinition Width="3"/>
       <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="320" MinWidth="240" MaxWidth="560"/>
     </Grid.ColumnDefinitions>
 
     <!-- Left Panel -->
@@ -943,5 +945,12 @@
         </StackPanel>
       </Border>
     </Border>
+
+    <!-- Worktrees panel: default-open, right side, read-only. Preserves the
+         existing left-side navigation. -->
+    <GridSplitter Grid.Column="3"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  Background="{DynamicResource Brush.Border0}"/>
+    <v:WorktreesPanel Grid.Column="4" DataContext="{Binding WorktreesPanel}"/>
   </Grid>
 </UserControl>

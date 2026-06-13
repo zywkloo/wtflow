@@ -1012,5 +1012,18 @@
   <x:String x:Key="Text.Worktree.Path" xml:space="preserve">PATH</x:String>
   <x:String x:Key="Text.Worktree.Remove" xml:space="preserve">Remove</x:String>
   <x:String x:Key="Text.Worktree.Unlock" xml:space="preserve">Unlock</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Agent" xml:space="preserve">Agent</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Alarms" xml:space="preserve">Alarms</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Current" xml:space="preserve">current</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Empty" xml:space="preserve">No worktrees in this repository.</x:String>
+  <x:String x:Key="Text.WorktreesPanel.GitOnly" xml:space="preserve">Git-native only (no wtcraft state)</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Locked" xml:space="preserve">locked</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Main" xml:space="preserve">main</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Role" xml:space="preserve">Role</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Session" xml:space="preserve">Session</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Stage" xml:space="preserve">Stage</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Title" xml:space="preserve">WORKTREES</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Unavailable" xml:space="preserve">wtcraft unavailable — showing Git-native facts only.</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Verification" xml:space="preserve">Check</x:String>
   <x:String x:Key="Text.Yes" xml:space="preserve">YES</x:String>
 </ResourceDictionary>

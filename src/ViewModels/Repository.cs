@@ -187,6 +187,11 @@ namespace SourceGit.ViewModels
             private set => SetProperty(ref _worktrees, value);
         }
 
+        public WorktreesPanel WorktreesPanel
+        {
+            get => _worktreesPanel;
+        }
+
         public List<Models.Tag> Tags
         {
             get => _tags;
@@ -1163,7 +1168,11 @@ namespace SourceGit.ViewModels
             {
                 var worktrees = await new Commands.Worktree(FullPath).ReadAllAsync().ConfigureAwait(false);
                 var cleaned = Worktree.Build(FullPath, worktrees);
-                Dispatcher.UIThread.Invoke(() => Worktrees = cleaned);
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    Worktrees = cleaned;
+                    _worktreesPanel.Update(FullPath, cleaned);
+                });
             });
         }
 
@@ -1919,6 +1928,7 @@ namespace SourceGit.ViewModels
         private List<BranchTreeNode> _localBranchTrees = [];
         private List<BranchTreeNode> _remoteBranchTrees = [];
         private List<Worktree> _worktrees = [];
+        private readonly WorktreesPanel _worktreesPanel = new(new Models.FixtureWtcraftClient());
         private List<Models.Tag> _tags = [];
         private object _visibleTags = null;
         private List<Models.Submodule> _submodules = [];
