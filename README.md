@@ -285,6 +285,9 @@ dotnet build
 dotnet run --project src/SourceGit.csproj
 ```
 
+> [!TIP]
+> For local macOS development and Claude Code onboarding in this fork, see docs/dev-setup-macos.md.
+
 Thanks to all the people who contribute.
 
 [![Contributors](https://contrib.rocks/image?repo=sourcegit-scm/sourcegit&columns=20)](https://github.com/sourcegit-scm/sourcegit/graphs/contributors)
