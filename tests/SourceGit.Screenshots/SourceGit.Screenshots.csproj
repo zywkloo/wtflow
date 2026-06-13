@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Headless screenshot harness for ticket docs. NOT part of SourceGit.slnx, so
+    it never ships and never gates CI. See README in docs/assets/tickets for the
+    run command. It renders a control via Avalonia.Headless + Skia (no display,
+    no screen permission) the Avalonia analog to a Storybook snapshot.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultAvaloniaItems>false</EnableDefaultAvaloniaItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Headless" Version="11.3.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/SourceGit.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,6 +2,20 @@
 
 Screenshots that document a feature/ticket go here.
 
+## Worktrees panel (read-only MVP)
+
+![Worktrees panel](worktree-panel-2026-06-13.png)
+
+Generated headlessly (no display / no screen-recording permission) via the
+`tests/SourceGit.Screenshots` harness — the Avalonia analog to a Storybook
+snapshot. It shows governed worktrees (`master`, `feat/worktree-panel-mvp`),
+a Git-only row (`docs/...`, graceful degradation), and an alarm.
+
+```sh
+dotnet run --project tests/SourceGit.Screenshots -- \
+  docs/assets/tickets/worktree-panel-$(date +%F).png
+```
+
 ## Naming convention
 
 ```
