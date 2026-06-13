@@ -1,8 +1,24 @@
 # wtflow - Git GUI for Worktrees & AI Agents
 
-`wtflow` is a powerful, cross-platform Git GUI client engineered specifically for **Git Worktrees** and **AI Agent Workflows**. 
+> **A worktree-first Git client for agent workflows.**
+>
+> `wtflow` is an experimental fork of [SourceGit](https://github.com/sourcegit-scm/sourcegit). It treats Git worktrees as first-class workspaces and explores task governance, lifecycle visibility, and one external agent TUI session per worktree. It seamlessly integrates with the `wtcraft` machine protocol.
 
-It is a hard fork of the excellent [SourceGit](https://github.com/sourcegit-scm/sourcegit) project, deeply modified to treat worktrees as first-class citizens and seamlessly integrate with the `wtcraft` machine protocol.
+[![build](https://github.com/zywkloo/wtflow/actions/workflows/build.yml/badge.svg)](https://github.com/zywkloo/wtflow/actions/workflows/build.yml)
+[![license](https://img.shields.io/github/license/zywkloo/wtflow.svg)](LICENSE)
+[![upstream](https://img.shields.io/badge/upstream-SourceGit-4f7cff)](https://github.com/sourcegit-scm/sourcegit)
+
+## Project Status
+
+`wtflow` is currently a research fork, not a stable SourceGit replacement.
+The first milestone is a read-only, default-open Worktrees panel that combines Git-native worktree facts with optional governance state from the [`wtcraft`](https://github.com/zywkloo/wtcraft) core.
+
+Planned boundaries:
+* Keep SourceGit's mature cross-platform Git client foundation.
+* Make worktrees the primary unit for agent-oriented development.
+* Allow at most one active external agent TUI session per worktree.
+* Keep agent runtimes and terminal emulation outside the application.
+* Preserve graceful operation when `wtcraft` is unavailable.
 
 ## Screenshots
 
