@@ -27,21 +27,40 @@
           BorderBrush="{DynamicResource Brush.Border0}"
           BorderThickness="1,0,0,0">
     <Grid RowDefinitions="Auto,Auto,*">
-      <!-- Header -->
+      <!-- Header toolbar -->
       <Border Grid.Row="0" Height="28"
               Background="{DynamicResource Brush.TitleBar}"
               BorderBrush="{DynamicResource Brush.Border0}"
               BorderThickness="0,0,0,1">
-        <Grid ColumnDefinitions="Auto,*,Auto" Margin="8,0">
+        <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto" Margin="8,0,4,0">
           <Path Grid.Column="0" Width="12" Height="12"
                 Data="{StaticResource Icons.Worktrees}"
                 Fill="{DynamicResource Brush.FG2}"/>
           <TextBlock Grid.Column="1" Classes="bold" Margin="6,0,0,0"
                      VerticalAlignment="Center"
                      Text="{DynamicResource Text.WorktreesPanel.Title}"/>
-          <TextBlock Grid.Column="2" VerticalAlignment="Center"
+          <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="4,0,4,0"
                      Foreground="{DynamicResource Brush.FG2}"
                      Text="{Binding Items.Count}"/>
+          <!-- Add worktree -->
+          <Button Grid.Column="3" Classes="icon_button" Width="26"
+                  Click="OnAddWorktree"
+                  ToolTip.Tip="{DynamicResource Text.Repository.Worktrees.Add}">
+            <Path Width="11" Height="11" Data="{StaticResource Icons.Worktree.Add}"/>
+          </Button>
+          <!-- Prune stale worktrees -->
+          <Button Grid.Column="4" Classes="icon_button" Width="26"
+                  Click="OnPruneWorktrees"
+                  IsVisible="{Binding !IsEmpty}"
+                  ToolTip.Tip="{DynamicResource Text.Repository.Worktrees.Prune}">
+            <Path Width="12" Height="12" Data="{StaticResource Icons.Loading}"/>
+          </Button>
+          <!-- Hide panel -->
+          <Button Grid.Column="5" Classes="icon_button" Width="26"
+                  Click="OnHidePanel"
+                  ToolTip.Tip="{DynamicResource Text.WorktreesPanel.Hide}">
+            <Path Width="10" Height="10" Data="{StaticResource Icons.Clear}"/>
+          </Button>
         </Grid>
       </Border>
 
@@ -72,7 +91,9 @@
               <Border Margin="0,3" Padding="8,6" CornerRadius="4"
                       Background="{DynamicResource Brush.Contents}"
                       BorderBrush="{DynamicResource Brush.Border2}"
-                      BorderThickness="1">
+                      BorderThickness="1"
+                      DoubleTapped="OnWorktreeDoubleTapped"
+                      ContextRequested="OnWorktreeContextRequested">
                 <StackPanel Orientation="Vertical">
                   <!-- Name + Git-native badges -->
                   <StackPanel Orientation="Horizontal">
@@ -165,7 +186,7 @@
                     </StackPanel>
                   </StackPanel>
 
-                  <!-- Degrade hint when this worktree has no governance state -->
+                  <!-- Degrade hint when no governance state -->
                   <TextBlock Classes="small italic" Margin="0,6,0,0"
                              Foreground="{DynamicResource Brush.FG2}"
                              IsVisible="{Binding !HasGovernance}"

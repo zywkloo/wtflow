@@ -6,12 +6,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SourceGit.ViewModels
 {
-    /// <summary>
-    /// One row in the Worktrees panel: Git-native facts plus the optional
-    /// wtcraft governance state. Read-only by design for the MVP.
-    /// </summary>
     public class WorktreePanelItem
     {
+        public Worktree SourceWorktree { get; }
+
         public string Name { get; }
         public string Branch { get; }
         public string Location { get; }
@@ -31,6 +29,8 @@ namespace SourceGit.ViewModels
 
         public WorktreePanelItem(Worktree wt, Models.WtcraftWorktreeState state)
         {
+            SourceWorktree = wt;
+
             Name = wt.Name;
             Branch = wt.Branch;
             Location = string.IsNullOrEmpty(wt.DisplayPath) ? wt.FullPath : wt.DisplayPath;
@@ -50,11 +50,6 @@ namespace SourceGit.ViewModels
         }
     }
 
-    /// <summary>
-    /// View-model for the default-open right-side Worktrees panel. It merges the
-    /// repository's Git-native worktrees with an optional wtcraft snapshot and
-    /// degrades gracefully (Git-only) when wtcraft is unavailable.
-    /// </summary>
     public class WorktreesPanel : ObservableObject
     {
         public ObservableCollection<WorktreePanelItem> Items { get; } = [];
@@ -71,15 +66,14 @@ namespace SourceGit.ViewModels
             private set => SetProperty(ref _isEmpty, value);
         }
 
-        public WorktreesPanel(Models.IWtcraftClient wtcraft)
+        public Repository Repository => _repo;
+
+        public WorktreesPanel(Models.IWtcraftClient wtcraft, Repository repo)
         {
             _wtcraft = wtcraft;
+            _repo = repo;
         }
 
-        /// <summary>
-        /// Rebuilds the panel rows from the latest Git worktree list. Safe to
-        /// call on every refresh; must run on the UI thread.
-        /// </summary>
         public void Update(string repoPath, IReadOnlyList<Worktree> worktrees)
         {
             var snapshot = TryGetSnapshot(repoPath);
@@ -99,7 +93,6 @@ namespace SourceGit.ViewModels
         {
             try
             {
-                // A client should not throw, but never trust that across a boundary.
                 return _wtcraft?.GetSnapshot(repoPath);
             }
             catch
@@ -128,6 +121,7 @@ namespace SourceGit.ViewModels
         }
 
         private readonly Models.IWtcraftClient _wtcraft;
+        private readonly Repository _repo;
         private bool _isWtcraftAvailable = false;
         private bool _isEmpty = true;
     }

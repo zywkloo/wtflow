@@ -19,7 +19,39 @@ namespace SourceGit.Views
         {
             base.OnLoaded(e);
             UpdateLeftSidebarLayout();
+            if (DataContext is ViewModels.Repository vm)
+                ApplyPanelVisibility(vm.IsWorktreesPanelVisible);
         }
+
+        protected override void OnDataContextChanged(EventArgs e)
+        {
+            base.OnDataContextChanged(e);
+            if (_repoVm != null)
+                _repoVm.PropertyChanged -= OnRepoPropertyChanged;
+            _repoVm = DataContext as ViewModels.Repository;
+            if (_repoVm != null)
+            {
+                _repoVm.PropertyChanged += OnRepoPropertyChanged;
+                ApplyPanelVisibility(_repoVm.IsWorktreesPanelVisible);
+            }
+        }
+
+        private void OnRepoPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModels.Repository.IsWorktreesPanelVisible) &&
+                sender is ViewModels.Repository vm)
+                ApplyPanelVisibility(vm.IsWorktreesPanelVisible);
+        }
+
+        private void ApplyPanelVisibility(bool visible)
+        {
+            RootGrid.ColumnDefinitions[3].Width = visible ? new GridLength(4) : new GridLength(0);
+            RootGrid.ColumnDefinitions[4].MinWidth = visible ? 240 : 0;
+            RootGrid.ColumnDefinitions[4].MaxWidth = visible ? 560 : 0;
+            RootGrid.ColumnDefinitions[4].Width = visible ? new GridLength(320) : new GridLength(0);
+        }
+
+        private ViewModels.Repository _repoVm;
 
         private void OnToggleFilter(object _, RoutedEventArgs e)
         {
@@ -87,91 +119,6 @@ namespace SourceGit.Views
             RemoteBranchTree.UnselectAll();
         }
 
-        private void OnWorktreeContextRequested(object sender, ContextRequestedEventArgs e)
-        {
-            if (sender is Control { DataContext: ViewModels.Worktree worktree } ctrl && DataContext is ViewModels.Repository repo)
-            {
-                var menu = new ContextMenu();
-
-                var switchTo = new MenuItem();
-                switchTo.Header = App.Text("Worktree.Open");
-                switchTo.Icon = this.CreateMenuIcon("Icons.Folder.Open");
-                switchTo.Click += (_, ev) =>
-                {
-                    repo.OpenWorktree(worktree);
-                    ev.Handled = true;
-                };
-                menu.Items.Add(switchTo);
-                menu.Items.Add(new MenuItem() { Header = "-" });
-
-                if (worktree.IsLocked)
-                {
-                    var unlock = new MenuItem();
-                    unlock.Header = App.Text("Worktree.Unlock");
-                    unlock.Icon = this.CreateMenuIcon("Icons.Unlock");
-                    unlock.Click += async (_, ev) =>
-                    {
-                        await repo.UnlockWorktreeAsync(worktree);
-                        ev.Handled = true;
-                    };
-                    menu.Items.Add(unlock);
-                }
-                else
-                {
-                    var loc = new MenuItem();
-                    loc.Header = App.Text("Worktree.Lock");
-                    loc.Icon = this.CreateMenuIcon("Icons.Lock");
-                    loc.IsEnabled = !worktree.IsMain;
-                    loc.Click += async (_, ev) =>
-                    {
-                        await repo.LockWorktreeAsync(worktree);
-                        ev.Handled = true;
-                    };
-                    menu.Items.Add(loc);
-                }
-
-                var remove = new MenuItem();
-                remove.Header = App.Text("Worktree.Remove");
-                remove.Icon = this.CreateMenuIcon("Icons.Clear");
-                remove.IsEnabled = !worktree.IsCurrent && !worktree.IsMain;
-                remove.Click += (_, ev) =>
-                {
-                    if (repo.CanCreatePopup())
-                        repo.ShowPopup(new ViewModels.RemoveWorktree(repo, worktree));
-                    ev.Handled = true;
-                };
-                menu.Items.Add(remove);
-
-                var copy = new MenuItem();
-                copy.Header = App.Text("Worktree.CopyPath");
-                copy.Icon = this.CreateMenuIcon("Icons.Copy");
-                copy.Click += async (_, ev) =>
-                {
-                    await this.CopyTextAsync(worktree.FullPath);
-                    ev.Handled = true;
-                };
-                menu.Items.Add(new MenuItem() { Header = "-" });
-                menu.Items.Add(copy);
-                menu.Open(ctrl);
-            }
-
-            e.Handled = true;
-        }
-
-        private void OnWorktreeDoubleTapped(object sender, TappedEventArgs e)
-        {
-            if (sender is Control { DataContext: ViewModels.Worktree worktree } && DataContext is ViewModels.Repository repo)
-                repo.OpenWorktree(worktree);
-
-            e.Handled = true;
-        }
-
-        private void OnWorktreeListPropertyChanged(object _, AvaloniaPropertyChangedEventArgs e)
-        {
-            if (e.Property == ItemsControl.ItemsSourceProperty || e.Property == IsVisibleProperty)
-                UpdateLeftSidebarLayout();
-        }
-
         private void OnLeftSidebarRowsChanged(object _, RoutedEventArgs e)
         {
             UpdateLeftSidebarLayout();
@@ -193,7 +140,7 @@ namespace SourceGit.Views
             if (!IsLoaded)
                 return;
 
-            var leftHeight = LeftSidebarGroups.Bounds.Height - 28.0 * 5 - 4;
+            var leftHeight = LeftSidebarGroups.Bounds.Height - 28.0 * 4 - 4;
             if (leftHeight <= 0)
                 return;
 
@@ -202,26 +149,8 @@ namespace SourceGit.Views
             var desiredBranches = (localBranchRows + remoteBranchRows) * 24.0;
             var desiredTag = vm.IsTagGroupExpanded ? 24.0 * TagsList.Rows : 0;
             var desiredSubmodule = vm.IsSubmoduleGroupExpanded ? 24.0 * SubmoduleList.Rows : 0;
-            var desiredWorktree = vm.IsWorktreeGroupExpanded ? 24.0 * vm.Worktrees.Count : 0;
-            var desiredOthers = desiredTag + desiredSubmodule + desiredWorktree;
+            var desiredOthers = desiredTag + desiredSubmodule;
             var hasOverflow = (desiredBranches + desiredOthers > leftHeight);
-
-            if (vm.IsWorktreeGroupExpanded)
-            {
-                var height = desiredWorktree;
-                if (hasOverflow)
-                {
-                    var test = leftHeight - desiredBranches - desiredTag - desiredSubmodule;
-                    if (test < 0)
-                        height = Math.Min(120, height);
-                    else
-                        height = Math.Max(120, test);
-                }
-
-                leftHeight -= height;
-                WorktreeList.Height = height;
-                hasOverflow = (desiredBranches + desiredTag + desiredSubmodule) > leftHeight;
-            }
 
             if (vm.IsSubmoduleGroupExpanded)
             {
@@ -612,14 +541,6 @@ namespace SourceGit.Views
                 menu.Items.Add(byCreatorDate);
                 menu.Open(button);
             }
-
-            e.Handled = true;
-        }
-
-        private async void OnPruneWorktrees(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is ViewModels.Repository repo)
-                await repo.PruneWorktreesAsync();
 
             e.Handled = true;
         }

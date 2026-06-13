@@ -361,6 +361,19 @@ namespace SourceGit.ViewModels
             }
         }
 
+        public bool IsWorktreesPanelVisible
+        {
+            get => _uiStates.IsWorktreesPanelVisible;
+            set
+            {
+                if (value != _uiStates.IsWorktreesPanelVisible)
+                {
+                    _uiStates.IsWorktreesPanelVisible = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public bool IsSortingLocalBranchByName
         {
             get => _uiStates.LocalBranchSortMode == Models.BranchSortMode.Name;
@@ -460,6 +473,7 @@ namespace SourceGit.ViewModels
 
             _settings = Models.RepositorySettings.Get(_gitCommonDir);
             _uiStates = Models.RepositoryUIStates.Load(GitDir);
+            _worktreesPanel = new WorktreesPanel(new Models.FixtureWtcraftClient(), this);
         }
 
         public void Open()
@@ -1928,7 +1942,7 @@ namespace SourceGit.ViewModels
         private List<BranchTreeNode> _localBranchTrees = [];
         private List<BranchTreeNode> _remoteBranchTrees = [];
         private List<Worktree> _worktrees = [];
-        private readonly WorktreesPanel _worktreesPanel = new(new Models.FixtureWtcraftClient());
+        private WorktreesPanel _worktreesPanel;
         private List<Models.Tag> _tags = [];
         private object _visibleTags = null;
         private List<Models.Submodule> _submodules = [];

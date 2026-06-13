@@ -24,6 +24,12 @@
       <Button Classes="icon_button" Width="32" Click="OpenConfigure" ToolTip.Tip="{DynamicResource Text.Repository.Configure}">
         <Path Width="14" Height="14" Data="{StaticResource Icons.Settings}"/>
       </Button>
+
+      <ToggleButton Classes="icon_button" Width="32"
+                    IsChecked="{Binding IsWorktreesPanelVisible, Mode=TwoWay}"
+                    ToolTip.Tip="{DynamicResource Text.WorktreesPanel.Title}">
+        <Path Width="12" Height="12" Data="{StaticResource Icons.Worktrees}"/>
+      </ToggleButton>
     </StackPanel>
 
     <StackPanel Grid.Column="1" Orientation="Horizontal">

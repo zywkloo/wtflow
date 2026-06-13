@@ -1020,6 +1020,7 @@
   <x:String x:Key="Text.WorktreesPanel.Locked" xml:space="preserve">locked</x:String>
   <x:String x:Key="Text.WorktreesPanel.Main" xml:space="preserve">main</x:String>
   <x:String x:Key="Text.WorktreesPanel.Role" xml:space="preserve">Role</x:String>
+  <x:String x:Key="Text.WorktreesPanel.Hide" xml:space="preserve">Hide Worktrees panel</x:String>
   <x:String x:Key="Text.WorktreesPanel.Session" xml:space="preserve">Session</x:String>
   <x:String x:Key="Text.WorktreesPanel.Stage" xml:space="preserve">Stage</x:String>
   <x:String x:Key="Text.WorktreesPanel.Title" xml:space="preserve">WORKTREES</x:String>

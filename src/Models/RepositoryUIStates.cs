@@ -207,6 +207,12 @@ namespace SourceGit.Models
             set;
         } = false;
 
+        public bool IsWorktreesPanelVisible
+        {
+            get;
+            set;
+        } = true;
+
         public List<string> ExpandedBranchNodesInSideBar
         {
             get;
