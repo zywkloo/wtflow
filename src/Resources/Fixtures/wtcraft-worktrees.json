@@ -1,0 +1,27 @@
+{
+  "SchemaVersion": 1,
+  "Worktrees": [
+    {
+      "Branch": "master",
+      "Path": "",
+      "Stage": "integration",
+      "Role": "trunk",
+      "Agent": "",
+      "Verification": "passing",
+      "Alarms": [],
+      "SessionState": "no session"
+    },
+    {
+      "Branch": "feat/worktree-panel-mvp",
+      "Path": "worktrees/feat/worktree-panel-mvp",
+      "Stage": "in-progress",
+      "Role": "executor",
+      "Agent": "claude",
+      "Verification": "pending",
+      "Alarms": [
+        "read-only MVP: worktree mutations disabled"
+      ],
+      "SessionState": "placeholder: no agent session"
+    }
+  ]
+}
