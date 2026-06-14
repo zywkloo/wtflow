@@ -473,7 +473,7 @@ namespace SourceGit.ViewModels
 
             _settings = Models.RepositorySettings.Get(_gitCommonDir);
             _uiStates = Models.RepositoryUIStates.Load(GitDir);
-            _worktreesPanel = new WorktreesPanel(new Models.FixtureWtcraftClient(), this);
+            _worktreesPanel = new WorktreesPanel(new Models.CliWtcraftClient(), this);
         }
 
         public void Open()
@@ -1182,10 +1182,11 @@ namespace SourceGit.ViewModels
             {
                 var worktrees = await new Commands.Worktree(FullPath).ReadAllAsync().ConfigureAwait(false);
                 var cleaned = Worktree.Build(FullPath, worktrees);
+                var snapshot = await _worktreesPanel.FetchSnapshotAsync(FullPath).ConfigureAwait(false);
                 Dispatcher.UIThread.Invoke(() =>
                 {
                     Worktrees = cleaned;
-                    _worktreesPanel.Update(FullPath, cleaned);
+                    _worktreesPanel.Update(snapshot, cleaned);
                 });
             });
         }
