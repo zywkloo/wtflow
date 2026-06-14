@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 using Avalonia.Platform;
 
@@ -7,9 +8,8 @@ namespace SourceGit.Models
 {
     /// <summary>
     /// <see cref="IWtcraftClient"/> backed by a checked-in JSON fixture embedded
-    /// as an Avalonia resource. This keeps the panel demonstrable without
-    /// depending on an unreleased local wtcraft protocol, and exercises the same
-    /// graceful-degradation paths the real client will need.
+    /// as an Avalonia resource. Kept as a test/demo fallback; production wiring
+    /// uses <see cref="CliWtcraftClient"/>.
     /// </summary>
     public class FixtureWtcraftClient : IWtcraftClient
     {
@@ -18,18 +18,16 @@ namespace SourceGit.Models
         public static readonly Uri FixtureUri =
             new("avares://SourceGit/Resources/Fixtures/wtcraft-worktrees.json");
 
-        public bool IsAvailable => _snapshot != null;
-
         public FixtureWtcraftClient()
         {
             _snapshot = TryLoad();
         }
 
-        public WtcraftSnapshot GetSnapshot(string repoPath)
+        public Task<WtcraftSnapshot> GetSnapshotAsync(string repoPath)
         {
-            // The fixture is repo-agnostic; a real client would key off repoPath.
+            // The fixture is repo-agnostic; a real client keys off repoPath.
             _ = repoPath;
-            return _snapshot;
+            return Task.FromResult(_snapshot);
         }
 
         private static WtcraftSnapshot TryLoad()

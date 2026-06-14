@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -74,9 +75,26 @@ namespace SourceGit.ViewModels
             _repo = repo;
         }
 
-        public void Update(string repoPath, IReadOnlyList<Worktree> worktrees)
+        // Runs off the UI thread: may shell out to the wtcraft CLI. Never throws.
+        public async Task<Models.WtcraftSnapshot> FetchSnapshotAsync(string repoPath)
         {
-            var snapshot = TryGetSnapshot(repoPath);
+            if (_wtcraft == null)
+                return null;
+
+            try
+            {
+                return await _wtcraft.GetSnapshotAsync(repoPath).ConfigureAwait(false);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        // Applies an already-fetched snapshot. Must run on the UI thread (mutates
+        // the observable Items collection).
+        public void Update(Models.WtcraftSnapshot snapshot, IReadOnlyList<Worktree> worktrees)
+        {
             IsWtcraftAvailable = snapshot != null;
 
             Items.Clear();
@@ -87,18 +105,6 @@ namespace SourceGit.ViewModels
             }
 
             IsEmpty = Items.Count == 0;
-        }
-
-        private Models.WtcraftSnapshot TryGetSnapshot(string repoPath)
-        {
-            try
-            {
-                return _wtcraft?.GetSnapshot(repoPath);
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         private static Models.WtcraftWorktreeState MatchState(Models.WtcraftSnapshot snapshot, Worktree wt)
