@@ -811,7 +811,7 @@ namespace SourceGit.ViewModels
                     locals.Add(b);
             }
 
-            var builder = BuildBranchTree(locals, []);
+            var builder = BuildBranchTree(locals, [], false);
             LocalBranchTrees = builder.Locals;
 
             RefreshCommits();
@@ -846,7 +846,7 @@ namespace SourceGit.ViewModels
                     locals.Add(b);
             }
 
-            var builder = BuildBranchTree(locals, []);
+            var builder = BuildBranchTree(locals, [], false);
             LocalBranchTrees = builder.Locals;
             CurrentBranch = checkouted;
 
@@ -872,7 +872,7 @@ namespace SourceGit.ViewModels
                     locals.Add(branch);
             }
 
-            var builder = BuildBranchTree(locals, []);
+            var builder = BuildBranchTree(locals, [], false);
             LocalBranchTrees = builder.Locals;
 
             RefreshCommits();
@@ -1520,7 +1520,7 @@ namespace SourceGit.ViewModels
 
                 await new Commands.Submodule(FullPath)
                     .Use(log)
-                    .UpdateAsync(submodules);
+                    .UpdateAsync(submodules, false, _settings.EnableRecursiveWhenAutoUpdatingSubmodules, false);
             } while (false);
         }
 
@@ -1658,7 +1658,7 @@ namespace SourceGit.ViewModels
             return null;
         }
 
-        private BranchTreeNode.Builder BuildBranchTree(List<Models.Branch> branches, List<Models.Remote> remotes)
+        private BranchTreeNode.Builder BuildBranchTree(List<Models.Branch> branches, List<Models.Remote> remotes, bool validateExpandedNodes = true)
         {
             var builder = new BranchTreeNode.Builder(_uiStates.LocalBranchSortMode, _uiStates.RemoteBranchSortMode);
             if (string.IsNullOrEmpty(_filter))
@@ -1666,8 +1666,11 @@ namespace SourceGit.ViewModels
                 builder.SetExpandedNodes(_uiStates.ExpandedBranchNodesInSideBar);
                 builder.Run(branches, remotes, false);
 
-                foreach (var invalid in builder.InvalidExpandedNodes)
-                    _uiStates.ExpandedBranchNodesInSideBar.Remove(invalid);
+                if (validateExpandedNodes)
+                {
+                    foreach (var invalid in builder.InvalidExpandedNodes)
+                        _uiStates.ExpandedBranchNodesInSideBar.Remove(invalid);
+                }
             }
             else
             {
@@ -1891,13 +1894,13 @@ namespace SourceGit.ViewModels
                     await new Commands.Fetch(FullPath, remote).Use(log).RunAsync();
 
                 _lastFetchTime = DateTime.Now;
-                IsAutoFetching = false;
             }
             catch
             {
                 // Ignore all exceptions.
             }
 
+            IsAutoFetching = false;
             log?.Complete();
         }
 
